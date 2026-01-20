@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react'
@@ -9,6 +9,14 @@ const Analysis = () => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => {
+    // Check if user is logged in
+    const userId = localStorage.getItem('userId')
+    if (!userId) {
+      navigate('/login')
+    }
+  }, [navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()

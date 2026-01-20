@@ -5,7 +5,7 @@ Designed by Tejas - Schema design and data consistency lead
 
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class SyntheticInput(BaseModel):
@@ -75,5 +75,35 @@ class AnalysisDocument(BaseModel):
     report_generated: bool = False
     report_path: Optional[str] = None
     
+    # User reference
+    user_id: Optional[str] = None
+    
     # Error handling
     error_message: Optional[str] = None
+
+
+# User-related schemas
+class UserProfile(BaseModel):
+    """Schema for user profile"""
+    user_id: str
+    email: str
+    username: str
+    profession: str
+    full_name: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    analysis_history: List[str] = []  # List of analysis IDs
+
+
+class UserDocument(BaseModel):
+    """Schema for user document in MongoDB"""
+    user_id: str
+    email: str
+    username: str
+    password_hash: str
+    profession: str
+    full_name: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    analysis_history: List[Dict[str, Any]] = []  # List of analysis with URLs
+    is_active: bool = True

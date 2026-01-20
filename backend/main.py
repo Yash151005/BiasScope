@@ -14,6 +14,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 from app.services.analysis_service import AnalysisService
+from app.services.auth_service import AuthService
 from app.database.mongodb import get_database
 from app.utils.logger import setup_logger
 
@@ -68,6 +69,34 @@ class AnalysisRequest(BaseModel):
 class AnalysisResponse(BaseModel):
     analysis_id: str
     status: str
+    message: str
+
+
+# Authentication Request/Response Models
+class SignupRequest(BaseModel):
+    email: str
+    username: str
+    password: str
+    full_name: str
+    profession: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class UpdateProfileRequest(BaseModel):
+    full_name: Optional[str] = None
+    profession: Optional[str] = None
+    email: Optional[str] = None
+    profile_photo: Optional[str] = None
+
+
+class ContactRequest(BaseModel):
+    name: str
+    email: str
+    subject: str
     message: str
 
 
@@ -191,6 +220,186 @@ async def list_analyses(limit: int = 10, skip: int = 0):
     except Exception as e:
         logger.error(f"Error listing analyses: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to list analyses: {str(e)}")
+
+
+# ============= AUTHENTICATION ENDPOINTS =============
+
+@app.post("/api/auth/signup")
+async def signup(request: SignupRequest):
+    """
+    Register a new user
+    """
+    try:
+        auth_service = AuthService()
+        result = await auth_service.register_user(
+            email=request.email,
+            username=request.username,
+            password=request.password,
+            full_name=request.full_name,
+            profession=request.profession
+        )
+        
+        if result["success"]:
+            return {"success": True, "message": "User registered successfully", "data": result}
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error during signup: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Signup failed: {str(e)}")
+
+
+@app.post("/api/auth/login")
+async def login(request: LoginRequest):
+    """
+    Login user with email and password
+    """
+    try:
+        auth_service = AuthService()
+        result = await auth_service.login_user(
+            email=request.email,
+            password=request.password
+        )
+        
+        if result["success"]:
+            return {"success": True, "message": "Login successful", "data": result}
+        else:
+            raise HTTPException(status_code=401, detail=result["error"])
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error during login: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
+
+
+@app.get("/api/auth/user/{user_id}")
+async def get_user(user_id: str):
+    """
+    Get user profile information
+    """
+    try:
+        auth_service = AuthService()
+        user = await auth_service.get_user(user_id)
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {"success": True, "data": user}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching user {user_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch user: {str(e)}")
+
+
+@app.post("/api/auth/update-profile")
+async def update_profile(user_id: str, request: UpdateProfileRequest):
+    """
+    Update user profile information
+    """
+    try:
+        auth_service = AuthService()
+        result = await auth_service.update_user_profile(
+            user_id=user_id,
+            full_name=request.full_name,
+            profession=request.profession,
+            email=request.email,
+            profile_photo=request.profile_photo
+        )
+        
+        if result["success"]:
+            return {"success": True, "message": result["message"], "data": result["user"]}
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating profile: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
+
+
+@app.post("/api/auth/save-analysis")
+async def save_analysis_to_user(
+    user_id: str,
+    analysis_id: str,
+    model_url: str,
+    report_url: str
+):
+    """
+    Save analysis report URL to user's account
+    """
+    try:
+        auth_service = AuthService()
+        success = await auth_service.save_analysis_to_user(
+            user_id=user_id,
+            analysis_id=analysis_id,
+            model_url=model_url,
+            report_url=report_url
+        )
+        
+        if success:
+            return {"success": True, "message": "Analysis saved to your account"}
+        else:
+            raise HTTPException(status_code=400, detail="Failed to save analysis")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error saving analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to save analysis: {str(e)}")
+
+
+@app.get("/api/auth/user/{user_id}/analyses")
+async def get_user_analyses(user_id: str):
+    """
+    Get user's analysis history
+    """
+    try:
+        auth_service = AuthService()
+        analyses = await auth_service.get_user_analysis_history(user_id)
+        
+        return {"success": True, "analyses": analyses}
+        
+    except Exception as e:
+        logger.error(f"Error fetching user analyses: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch analyses: {str(e)}")
+
+
+# ============= CONTACT US ENDPOINT =============
+
+@app.post("/api/contact")
+async def contact_us(request: ContactRequest):
+    """
+    Handle contact form submissions
+    """
+    try:
+        db = await get_database()
+        
+        contact_doc = {
+            "name": request.name,
+            "email": request.email,
+            "subject": request.subject,
+            "message": request.message,
+            "submitted_at": datetime.utcnow(),
+            "status": "new"
+        }
+        
+        await db.contact_messages.insert_one(contact_doc)
+        
+        logger.info(f"Contact message received from {request.email}")
+        return {
+            "success": True,
+            "message": "Thank you for contacting us. We will get back to you soon!"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error processing contact form: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to submit contact form: {str(e)}")
 
 
 if __name__ == "__main__":
