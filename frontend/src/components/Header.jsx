@@ -64,7 +64,9 @@ const Header = () => {
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-sm font-bold">
-                    {user.username.charAt(0).toUpperCase()}
+                    {user && user.username && typeof user.username === 'string' && user.username.length > 0
+                      ? user.username.charAt(0).toUpperCase()
+                      : '?'}
                   </div>
                 )}
                 <Link
