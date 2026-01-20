@@ -13,8 +13,25 @@ from app.utils.logger import setup_logger
 logger = setup_logger(__name__)
 
 
+
 class AuthService:
     """Service for user authentication and management"""
+
+    async def delete_analysis_from_user(self, user_id: str, analysis_id: str) -> bool:
+        """Delete a single analysis from user's analysis history"""
+        try:
+            db = await get_database()
+            result = await db.users.update_one(
+                {"user_id": user_id},
+                {"$pull": {"analysis_history": {"analysis_id": analysis_id}}, "$set": {"updated_at": datetime.utcnow()}}
+            )
+            if result.modified_count > 0:
+                logger.info(f"Deleted analysis {analysis_id} from user {user_id}")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Error deleting analysis from user: {str(e)}")
+            return False
 
     def __init__(self):
         self.salt_length = 16

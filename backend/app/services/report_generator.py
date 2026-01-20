@@ -157,12 +157,16 @@ class ReportGenerator:
         self, analysis_id: str, results: Dict[str, Any]
     ) -> str:
         """Generate professional PDF report with authenticity certificate"""
+        print(f"Starting PDF generation for analysis {analysis_id}")
         pdf_path = os.path.join(self.reports_dir, f"{analysis_id}_report.pdf")
+        print(f"PDF path: {pdf_path}")
         doc = SimpleDocTemplate(pdf_path, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
         story = []
         styles = getSampleStyleSheet()
+        print("Initialized PDF document and styles")
 
         # ===== PAGE 1: COVER PAGE WITH CERTIFICATE =====
+        print("Starting cover page generation")
         
         # Header with logo styling
         header_style = ParagraphStyle(
@@ -313,20 +317,25 @@ class ReportGenerator:
         story.append(info_table)
         story.append(Spacer(1, 0.3 * inch))
 
-        # Overall Bias Score - Enhanced display
+        # Overall Bias Score - Enhanced display with percentage, alignment, and recommendations
+        print("Starting bias score section")
         bias_score = results.get("overall_bias_score", 0)
-        
+        bias_percentage = bias_score * 100
+        print(f"Bias score: {bias_score}, percentage: {bias_percentage}")
+
         score_section_style = ParagraphStyle(
             "ScoreSection",
             parent=styles["Heading2"],
             fontSize=16,
             textColor=colors.HexColor("#0ea5e9"),
             spaceAfter=15,
-            fontName="Helvetica-Bold"
+            fontName="Helvetica-Bold",
+            alignment=TA_CENTER
         )
         story.append(Paragraph("Overall Bias Score Assessment", score_section_style))
-        
-        # Bias score with color coding
+        print("Added score section title")
+
+        # Bias score with color coding and percentage
         bias_color = self._get_bias_color(bias_score)
         score_style = ParagraphStyle(
             "ScoreStyle",
@@ -336,9 +345,23 @@ class ReportGenerator:
             alignment=TA_CENTER,
             fontName="Helvetica-Bold"
         )
-        story.append(Paragraph(f"{bias_score:.4f}", score_style))
-        story.append(Spacer(1, 0.1 * inch))
-        
+        # Show both score and percentage, aligned horizontally
+        score_table = Table([
+            [
+                Paragraph(f"<b>{bias_score:.4f}</b>", score_style),
+                Paragraph(f"<b>{bias_percentage:.1f}%</b>", score_style)
+            ]
+        ], colWidths=[2*inch, 2*inch], hAlign='CENTER')
+        score_table.setStyle(TableStyle([
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ]))
+        story.append(score_table)
+        story.append(Spacer(1, 0.3 * inch))
+        print("Added bias score table")
+
         fairness_level = self._get_fairness_level(bias_score)
         level_style = ParagraphStyle(
             "LevelStyle",
@@ -349,8 +372,23 @@ class ReportGenerator:
             fontName="Helvetica-Bold"
         )
         story.append(Paragraph(f"Fairness Level: {fairness_level}", level_style))
+        story.append(Spacer(1, 0.3 * inch))
+        print("Added fairness level")
+
+        # Recommendations based on bias score
+        recommendation = self._get_recommendation(bias_score)
+        recommendation_style = ParagraphStyle(
+            "RecommendationStyle",
+            parent=styles["Normal"],
+            fontSize=11,
+            alignment=TA_CENTER,
+            textColor=colors.HexColor("#0ea5e9"),
+            spaceAfter=8,
+        )
+        story.append(Paragraph(f"<b>Recommendation:</b> {recommendation}", recommendation_style))
         story.append(Spacer(1, 0.1 * inch))
-        
+        print("Added recommendation")
+
         # Bias scale explanation
         explanation_style = ParagraphStyle(
             "ExplanationStyle",
@@ -364,8 +402,11 @@ class ReportGenerator:
             explanation_style
         ))
         story.append(Spacer(1, 0.3 * inch))
+        print("Added bias scale explanation")
+        print("Finished bias score section")
 
         # Fairness Metrics Table
+        print("Starting fairness metrics section")
         if results.get("fairness_metrics"):
             story.append(Paragraph("Detailed Fairness Metrics", score_section_style))
             data = [["Metric Name", "Value", "Interpretation"]]
@@ -387,81 +428,185 @@ class ReportGenerator:
 
             table = Table(data, colWidths=[2*inch, 1.5*inch, 2*inch])
             table.setStyle(
-                TableStyle(
-                    [
-                        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0ea5e9")),
-                        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-                        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-                        ("ALIGN", (1, 1), (1, -1), "CENTER"),
-                        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                        ("FONTSIZE", (0, 0), (-1, 0), 11),
-                        ("FONTSIZE", (0, 1), (-1, -1), 10),
-                        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-                        ("TOPPADDING", (0, 0), (-1, 0), 12),
-                        ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#f0f9ff")),
-                        ("GRID", (0, 0), (-1, -1), 1, colors.HexColor("#d1e7f6")),
-                        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.HexColor("#f0f9ff"), colors.HexColor("#ffffff")]),
-                    ]
-                )
+                TableStyle([
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0ea5e9")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                    ("ALIGN", (1, 1), (1, -1), "CENTER"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, 0), 11),
+                    ("FONTSIZE", (0, 1), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                    ("TOPPADDING", (0, 0), (-1, 0), 12),
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#f0f9ff")),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("GRID", (0, 0), (-1, -1), 1, colors.HexColor("#0ea5e9")),
+                ])
             )
             story.append(table)
             story.append(Spacer(1, 0.3 * inch))
+            print("Added fairness metrics table")
 
-        # Feature Influence
+        # Feature Influence Analysis
+        print("Starting feature influence section")
         if results.get("feature_influence"):
             story.append(Paragraph("Feature Influence Analysis", score_section_style))
-            data = [["Feature", "Bias Influence", "Importance"]]
-            for feature in results["feature_influence"]:
-                data.append(
-                    [
-                        feature["feature"],
-                        f"{feature['influence']:.4f}",
-                        f"{feature['importance']:.4f}",
-                    ]
-                )
+            story.append(Spacer(1, 0.2 * inch))
 
-            table = Table(data, colWidths=[2*inch, 1.5*inch, 1.5*inch])
-            table.setStyle(
-                TableStyle(
-                    [
-                        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0ea5e9")),
-                        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
-                        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                        ("FONTSIZE", (0, 0), (-1, 0), 11),
-                        ("FONTSIZE", (0, 1), (-1, -1), 10),
-                        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
-                        ("TOPPADDING", (0, 0), (-1, 0), 12),
-                        ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#f0f9ff")),
-                        ("GRID", (0, 0), (-1, -1), 1, colors.HexColor("#d1e7f6")),
-                        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.HexColor("#f0f9ff"), colors.HexColor("#ffffff")]),
-                    ]
-                )
+            # Create feature influence table
+            feature_data = [["Feature", "Influence Score", "Bias Contribution"]]
+            for feature in results["feature_influence"][:10]:  # Top 10 features
+                feature_data.append([
+                    feature.get("feature", "Unknown"),
+                    f"{feature.get('influence', 0):.4f}",
+                    "High" if feature.get('influence', 0) > 0.7 else "Moderate" if feature.get('influence', 0) > 0.3 else "Low"
+                ])
+
+            feature_table = Table(feature_data, colWidths=[2*inch, 1.5*inch, 1.5*inch])
+            feature_table.setStyle(
+                TableStyle([
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0ea5e9")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                    ("ALIGN", (1, 1), (2, -1), "CENTER"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, 0), 11),
+                    ("FONTSIZE", (0, 1), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                    ("TOPPADDING", (0, 0), (-1, 0), 12),
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#f0f9ff")),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("GRID", (0, 0), (-1, -1), 1, colors.HexColor("#0ea5e9")),
+                ])
             )
-            story.append(table)
+            story.append(feature_table)
             story.append(Spacer(1, 0.3 * inch))
+            print("Added feature influence table")
 
-        # Footer with authenticity seal
-        story.append(Spacer(1, 0.2 * inch))
-        footer_style = ParagraphStyle(
-            "FooterStyle",
-            parent=styles["Normal"],
-            fontSize=8,
-            textColor=colors.grey,
+        # Group Bias Analysis
+        print("Starting group bias section")
+        if results.get("group_bias"):
+            story.append(Paragraph("Group Bias Analysis", score_section_style))
+            story.append(Spacer(1, 0.2 * inch))
+
+            group_data = [["Group", "Bias Score", "Sample Size", "Status"]]
+            for group in results["group_bias"]:
+                bias_score = group.get("bias_score", 0)
+                status = "✓ Fair" if bias_score < 0.3 else "⚠ Moderate" if bias_score < 0.7 else "✗ High Bias"
+                group_data.append([
+                    group.get("group", "Unknown"),
+                    f"{bias_score:.4f}",
+                    str(group.get("sample_size", 0)),
+                    status
+                ])
+
+            group_table = Table(group_data, colWidths=[1.5*inch, 1.5*inch, 1.2*inch, 1.5*inch])
+            group_table.setStyle(
+                TableStyle([
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0ea5e9")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                    ("ALIGN", (1, 1), (2, -1), "CENTER"),
+                    ("ALIGN", (3, 1), (3, -1), "CENTER"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, 0), 11),
+                    ("FONTSIZE", (0, 1), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                    ("TOPPADDING", (0, 0), (-1, 0), 12),
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#f0f9ff")),
+                    ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ("GRID", (0, 0), (-1, -1), 1, colors.HexColor("#0ea5e9")),
+                ])
+            )
+            story.append(group_table)
+            story.append(Spacer(1, 0.3 * inch))
+            print("Added group bias table")
+
+        # Visualizations
+        print("Starting visualizations section")
+        if results.get("visualizations"):
+            story.append(Paragraph("Analysis Visualizations", score_section_style))
+            story.append(Spacer(1, 0.2 * inch))
+
+            for viz_name, viz_path in results["visualizations"].items():
+                if os.path.exists(viz_path):
+                    try:
+                        img = Image(viz_path, width=6*inch, height=4*inch)
+                        story.append(img)
+                        story.append(Spacer(1, 0.2 * inch))
+                        print(f"Added visualization: {viz_name}")
+                    except Exception as e:
+                        print(f"Failed to add visualization {viz_name}: {e}")
+                        logger.warning(f"Failed to add visualization {viz_name}: {e}")
+
+        # Digital Signature and Certificate
+        print("Starting digital signature section")
+        signature = self._generate_digital_signature(analysis_id)
+        cert_style = ParagraphStyle(
+            "CertificateStyle",
+            parent=styles["Heading2"],
+            fontSize=14,
+            textColor=colors.HexColor("#0ea5e9"),
+            spaceAfter=10,
             alignment=TA_CENTER,
-            borderPadding=10,
+            fontName="Helvetica-Bold"
         )
-        story.append(HRFlowable(width=7*inch, thickness=1, lineCap='round', color=colors.grey))
-        story.append(Spacer(1, 0.1 * inch))
-        story.append(Paragraph(
-            "This report is confidential and has been digitally signed for authenticity verification. "
-            "BiasScope™ provides advanced AI fairness analysis using state-of-the-art algorithms.",
-            footer_style
-        ))
+        story.append(Paragraph("Authenticity Certificate", cert_style))
+        story.append(Spacer(1, 0.2 * inch))
 
-        # Build PDF
-        doc.build(story)
+        # Certificate content
+        cert_data = [
+            ["Certificate Details", ""],
+            ["Analysis ID", analysis_id],
+            ["Report Generated", datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
+            ["Digital Signature", signature[:32] + "..."],
+            ["Verification Status", "✓ AUTHENTIC"],
+        ]
+
+        cert_table = Table(cert_data, colWidths=[2*inch, 3*inch])
+        cert_table.setStyle(
+            TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0ea5e9")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 12),
+                ("FONTSIZE", (0, 1), (-1, -1), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+                ("TOPPADDING", (0, 0), (-1, -1), 8),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#f0f9ff")),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("BOX", (0, 0), (-1, -1), 2, colors.HexColor("#0ea5e9")),
+                ("INNERGRID", (0, 0), (-1, -1), 1, colors.HexColor("#0ea5e9")),
+            ])
+        )
+        story.append(cert_table)
+        story.append(Spacer(1, 0.3 * inch))
+        print("Added certificate")
+
+        # Build PDF with error handling
+        print(f"About to build PDF with {len(story)} story elements")
+        try:
+            doc.build(story)
+            print("PDF built successfully")
+        except Exception as e:
+            import traceback
+            logger.error(f"Exception during PDF build: {e}")
+            logger.error(traceback.format_exc())
+            print(f"Exception during PDF build: {e}")
+            print(traceback.format_exc())
+            return None
+        print(f"Returning PDF path: {pdf_path}")
         return pdf_path
+
+    def _get_recommendation(self, bias_score: float) -> str:
+        """Return recommendation string based on bias score"""
+        if bias_score < 0.3:
+            return "Your model is fair and unbiased. Continue monitoring for changes as data evolves."
+        elif bias_score < 0.7:
+            return "Moderate bias detected. Review feature influence and consider rebalancing your training data or applying bias mitigation techniques."
+        else:
+            return "High bias detected! Strongly recommended to review data, retrain the model, and apply fairness interventions."
 
     def _generate_digital_signature(self, analysis_id: str) -> str:
         """Generate HMAC-SHA256 digital signature"""

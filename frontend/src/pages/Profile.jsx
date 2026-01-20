@@ -20,6 +20,30 @@ const Profile = () => {
   const [profilePhotoFile, setProfilePhotoFile] = useState(null)
   const [profilePhotoPreview, setProfilePhotoPreview] = useState(null)
 
+
+  // Delete a single analysis from history
+  const handleDeleteAnalysis = async (analysisId) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      setError('User not logged in');
+      return;
+    }
+    if (!window.confirm('Are you sure you want to delete this analysis from your history?')) return;
+    try {
+      setUpdating(true);
+      setError('');
+      setSuccess('');
+      await axios.delete(`/api/auth/user/${userId}/analysis/${analysisId}`);
+      setAnalyses((prev) => prev.filter((a) => a.analysis_id !== analysisId));
+      setSuccess('Analysis deleted from your history.');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to delete analysis');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const professions = [
     'Student',
     'Data Scientist',
@@ -413,12 +437,20 @@ const Profile = () => {
                       <td className="py-3 px-4 text-sm text-gray-600">
                         {new Date(analysis.saved_at).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 flex gap-2">
                         <button
                           onClick={() => navigate(`/results/${analysis.analysis_id}`)}
                           className="text-primary-600 hover:text-primary-700 font-medium text-sm transition-colors"
+                          disabled={updating}
                         >
                           View Report
+                        </button>
+                        <button
+                          onClick={() => handleDeleteAnalysis(analysis.analysis_id)}
+                          className="text-red-600 hover:text-red-700 font-medium text-sm transition-colors"
+                          disabled={updating}
+                        >
+                          Delete
                         </button>
                       </td>
                     </tr>

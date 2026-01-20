@@ -385,6 +385,27 @@ async def get_user_analyses(user_id: str):
         raise HTTPException(status_code=500, detail=f"Failed to fetch analyses: {str(e)}")
 
 
+
+# ============= DELETE ANALYSIS FROM HISTORY ENDPOINT =============
+
+from fastapi import Query
+
+@app.delete("/api/auth/user/{user_id}/analysis/{analysis_id}")
+async def delete_user_analysis(user_id: str, analysis_id: str):
+    """
+    Delete a single analysis from user's history
+    """
+    try:
+        auth_service = AuthService()
+        success = await auth_service.delete_analysis_from_user(user_id, analysis_id)
+        if success:
+            return {"success": True, "message": "Analysis deleted from your history."}
+        else:
+            raise HTTPException(status_code=404, detail="Analysis not found or could not be deleted.")
+    except Exception as e:
+        logger.error(f"Error deleting analysis from user history: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete analysis: {str(e)}")
+
 # ============= CONTACT US ENDPOINT =============
 
 @app.post("/api/contact")
