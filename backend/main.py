@@ -190,11 +190,24 @@ async def download_report(analysis_id: str):
     Download analysis report as PDF
     """
     try:
+        import os
+        
         analysis_service = AnalysisService()
         report_path = await analysis_service.generate_report(analysis_id)
 
         if not report_path:
             raise HTTPException(status_code=404, detail="Report not found or not ready")
+
+        # Check if file exists before returning
+        if not os.path.exists(report_path):
+            logger.error(f"Report file not found at: {report_path}")
+            raise HTTPException(status_code=404, detail=f"Report file not found at {report_path}")
+
+        # Check file size
+        file_size = os.path.getsize(report_path)
+        if file_size == 0:
+            logger.error(f"Report file is empty: {report_path}")
+            raise HTTPException(status_code=500, detail="Report file is empty")
 
         return FileResponse(
             report_path,
@@ -205,6 +218,8 @@ async def download_report(analysis_id: str):
         raise
     except Exception as e:
         logger.error(f"Error generating report for {analysis_id}: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Failed to generate report: {str(e)}")
 
 

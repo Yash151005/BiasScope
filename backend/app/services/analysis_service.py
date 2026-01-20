@@ -190,24 +190,41 @@ class AnalysisService:
 
     async def generate_report(self, analysis_id: str) -> Optional[str]:
         """Generate and return report path"""
-        analysis = await self.get_analysis(analysis_id)
-        if not analysis:
+        try:
+            analysis = await self.get_analysis(analysis_id)
+            if not analysis:
+                logger.warning(f"Analysis not found: {analysis_id}")
+                return None
+
+            if analysis.get("report_generated") and analysis.get("report_path"):
+                logger.info(f"Report already generated for {analysis_id}")
+                return analysis["report_path"]
+
+            if analysis.get("status") == "completed" and analysis.get("results"):
+                logger.info(f"Generating new report for {analysis_id}")
+                try:
+                    report_path = await self.report_generator.generate_report(
+                        analysis_id, analysis["results"]
+                    )
+                    await self.update_analysis(
+                        analysis_id,
+                        {
+                            "report_generated": True,
+                            "report_path": report_path,
+                        },
+                    )
+                    logger.info(f"Report generated successfully: {report_path}")
+                    return report_path
+                except Exception as e:
+                    logger.error(f"Error generating report: {str(e)}")
+                    import traceback
+                    logger.error(f"Traceback: {traceback.format_exc()}")
+                    raise
+
+            logger.warning(f"Analysis not in completed state or missing results: {analysis_id}")
             return None
-
-        if analysis.get("report_generated") and analysis.get("report_path"):
-            return analysis["report_path"]
-
-        if analysis.get("status") == "completed" and analysis.get("results"):
-            report_path = await self.report_generator.generate_report(
-                analysis_id, analysis["results"]
-            )
-            await self.update_analysis(
-                analysis_id,
-                {
-                    "report_generated": True,
-                    "report_path": report_path,
-                },
-            )
-            return report_path
-
-        return None
+        except Exception as e:
+            logger.error(f"Error in generate_report for {analysis_id}: {str(e)}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            raise
