@@ -212,7 +212,9 @@ class ReportGenerator:
         )
         
         cert_date = datetime.now().strftime('%B %d, %Y')
-        cert_number = analysis_id[:8].upper()
+        # Convert ObjectId to string if needed
+        analysis_id_str = str(analysis_id)
+        cert_number = analysis_id_str[:8].upper()
         
         story.append(Paragraph(
             f"This is to certify that the bias and fairness analysis contained herein "
