@@ -1,17 +1,21 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Scale, LogOut } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 const Header = () => {
   const [user, setUser] = useState(null)
 
+  const location = useLocation()
+
   useEffect(() => {
-    // Check if user is logged in
+    // Re-check localStorage when route changes (e.g. after login)
     const userData = localStorage.getItem('user')
     if (userData) {
       setUser(JSON.parse(userData))
+    } else {
+      setUser(null)
     }
-  }, [])
+  }, [location])
 
   const handleLogout = () => {
     localStorage.removeItem('user')
