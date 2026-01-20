@@ -4,6 +4,7 @@ Configuration settings for BiasScope Backend
 
 from pydantic_settings import BaseSettings
 from typing import Optional
+import os
 
 
 class Settings(BaseSettings):
@@ -26,8 +27,8 @@ class Settings(BaseSettings):
     model_request_timeout: int = 30
     model_max_retries: int = 3
 
-    # Report settings
-    reports_directory: str = "../reports"
+    # Report settings - Use absolute path
+    reports_directory: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../reports"))
 
     # Logging
     log_level: str = "INFO"
