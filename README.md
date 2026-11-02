@@ -1,194 +1,383 @@
-# BiasScope - AI Bias & Fairness Analysis Tool
+BiasScope – Automated AI Fairness & Explainability Auditing
 
-BiasScope is an automated tool for evaluating AI models for bias and fairness. Simply provide your model's API endpoint, and BiasScope will automatically generate synthetic test data, evaluate your model, and present comprehensive bias analysis results with visual reports.
+Evaluate AI. Detect Bias. Build Fairer Systems.
 
-## 🎯 Key Features
+BiasScope is an API-driven AI fairness auditing platform designed to assess machine learning models for potential algorithmic bias, evaluate fairness across demographic groups, and provide explainable audit reports.
 
-- **Automated Testing**: Generate synthetic data and evaluate models without manual input
-- **Comprehensive Analysis**: Uses Fairlearn, AIF360, SHAP, and LIME for thorough bias assessment
-- **Visual Reports**: Interactive charts and downloadable PDF reports
-- **Easy to Use**: Just provide your model API URL - no training or data preparation needed
-- **Real-time Progress**: Track analysis progress with live updates
+By providing a machine learning model's API endpoint, users can initiate an automated evaluation workflow involving synthetic test-data generation, model prediction analysis, fairness assessment, explainability techniques, and visual reporting.
 
-## 🏗️ Project Structure
+The platform aims to make AI fairness evaluation more accessible by reducing the need for users to manually prepare testing pipelines or integrate multiple fairness assessment libraries.
 
-```
+---
+
+🎯 Key Objectives
+
+- Automate fairness evaluation of machine learning models through API endpoints.
+- Identify potential prediction disparities across demographic groups.
+- Generate synthetic test data for controlled fairness experiments.
+- Integrate established fairness assessment and explainability techniques.
+- Provide interpretable visualizations and downloadable audit reports.
+- Establish a foundation for continuous fairness monitoring across model versions.
+
+✨ Key Features
+
+1. Automated Model Evaluation
+
+- Connect to an externally hosted machine learning model using its API endpoint.
+- Generate synthetic test inputs.
+- Submit test requests and collect model predictions.
+- Analyze prediction patterns across different demographic groups.
+
+2. Comprehensive Fairness Assessment
+
+- Integrate Fairlearn and AI Fairness 360 (AIF360).
+- Evaluate demographic parity and other applicable fairness metrics.
+- Identify potential disparities between protected groups.
+- Support comparative fairness analysis.
+
+3. Explainable AI Integration
+
+- Integrate SHAP for feature contribution analysis.
+- Integrate LIME for local prediction explanations.
+- Help investigate features associated with observed prediction disparities.
+
+4. Interactive Visualization & Reporting
+
+- Display fairness metrics through interactive charts.
+- Present comparative analysis across demographic groups.
+- Generate downloadable PDF audit reports.
+- Provide structured results for further investigation.
+
+5. Automated Testing Workflow
+
+- Reduce manual test-data preparation.
+- Track analysis progress through live updates.
+- Maintain analysis history and generated reports.
+
+«Important: Synthetic-data-based testing identifies potential fairness disparities under the generated test conditions. It does not independently establish whether a model is fair in real-world deployment. Conclusions depend on data representativeness, protected attributes, ground-truth labels, and the selected fairness criteria.»
+
+---
+
+🏗️ System Architecture
+
+BiasScope follows a modular architecture consisting of a frontend, backend, database, synthetic data generator, fairness analysis engine, and reporting module.
+
+                 USER
+                   |
+                   v
+          React + Tailwind UI
+                   |
+                   v
+             FastAPI Backend
+                   |
+          +--------+--------+
+          |                 |
+          v                 v
+    API Integration    Synthetic Data
+          |              Generator
+          |                 |
+          +--------+--------+
+                   |
+                   v
+             Model Testing
+                   |
+                   v
+          Prediction Collection
+                   |
+                   v
+          Fairness Analysis Engine
+                   |
+          +--------+--------+
+          |        |        |
+          v        v        v
+       Fairlearn AIF360  SHAP/LIME
+          |        |        |
+          +--------+--------+
+                   |
+                   v
+          Results & Visualization
+                   |
+             +-----+-----+
+             |           |
+             v           v
+          Dashboard   PDF Reports
+
+🛠️ Technology Stack
+
+Frontend
+
+- React 18
+- Tailwind CSS
+- Vite
+- Recharts
+- React Router
+
+Backend
+
+- Python
+- FastAPI
+- Faker
+- Fairlearn
+- IBM AI Fairness 360
+- SHAP
+- LIME
+- Matplotlib / Plotly
+- ReportLab
+
+Database
+
+- MongoDB
+
+Testing & Integration
+
+- REST API integration
+- Synthetic test-data generation
+- Sample model API
+- Automated prediction collection
+
+---
+
+📊 How BiasScope Works
+
+Step 1 – Model Connection
+
+The user provides an externally accessible machine learning model API endpoint.
+
+Step 2 – Synthetic Data Generation
+
+BiasScope generates test inputs using synthetic data generation techniques such as Faker. CTGAN can be explored for more advanced tabular data generation.
+
+Step 3 – Model Evaluation
+
+Generated inputs are submitted to the connected model API, and prediction responses are collected.
+
+Step 4 – Fairness Analysis
+
+Fairlearn and AIF360 are used to calculate applicable fairness metrics and identify potential disparities across demographic groups.
+
+Step 5 – Explainability Analysis
+
+SHAP and LIME can be used to investigate feature contributions and individual prediction explanations, subject to model and integration compatibility.
+
+Step 6 – Visualization and Reporting
+
+The results are presented through an interactive dashboard, with downloadable PDF reports for documentation and further analysis.
+
+---
+
+🔬 Research Direction & Potential Contributions
+
+BiasScope provides a foundation for research into automated fairness assessment of externally hosted machine learning models.
+
+The following areas represent potential research extensions and should not be interpreted as already implemented features unless supported by the actual codebase.
+
+Research Area| Proposed Enhancement
+Automated Schema Discovery| Identify model input fields and data types from API specifications
+Intelligent Synthetic Testing| Investigate statistically controlled generation of demographic test populations
+Multi-Metric Fairness Evaluation| Compare multiple fairness definitions and metrics
+Fairness-Aware Explainability| Investigate explanations associated with observed group disparities
+Continuous Fairness Monitoring| Compare fairness results across successive model versions
+Audit Reproducibility| Record test configurations, assumptions, metrics and evaluation results
+
+Potential Research Questions
+
+1. How effectively can API-driven testing identify prediction disparities without access to original training data?
+2. How do synthetic-data generation assumptions influence measured fairness metrics?
+3. Can explainability techniques help investigate the features associated with demographic disparities?
+4. How consistently do different fairness assessment frameworks evaluate the same model?
+5. How can fairness changes be monitored across different model versions?
+
+---
+
+📁 Project Structure
+
 BiasScope/
-├── frontend/          # React + Tailwind CSS UI
-├── backend/           # FastAPI Python backend
-├── database/          # MongoDB schemas and utilities
-├── sample_model_api/  # Local dummy model API for testing BiasScope
-├── reports/           # Generated analysis reports
-└── docs/              # Documentation and training materials
-```
+│
+├── frontend/              # React + Tailwind CSS interface
+├── backend/               # FastAPI backend
+├── database/              # MongoDB schemas and utilities
+├── sample_model_api/      # Sample prediction API
+├── reports/               # Generated analysis reports
+├── docs/                  # Project documentation
+│
+└── README.md
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
+🚀 Getting Started
 
-- **Node.js** 18+ and npm/yarn
-- **Python** 3.9+
-- **MongoDB** (local or remote)
-- **Git**
+Prerequisites
 
-### Installation
+- Node.js 18+
+- Python 3.9+
+- MongoDB
+- Git
 
-1. **Clone the repository**
-```bash
-git clone <repository-url>
+1. Clone Repository
+
+git clone https://github.com/Yash151005/BiasScope.git
 cd BiasScope
-```
 
-2. **Set up Frontend**
-```bash
+2. Frontend Setup
+
 cd frontend
 npm install
-```
 
-3. **Set up Backend**
-```bash
+3. Backend Setup
+
 cd ../backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+Activate the environment:
+
+Windows
+
+venv\Scripts\activate
+
+Linux / macOS
+
+source venv/bin/activate
+
+Install dependencies:
+
 pip install -r requirements.txt
+
+Configure environment variables:
+
 cp .env.example .env
-# Edit .env with your MongoDB URL and settings
-```
 
-4. **Start MongoDB**
-```bash
-# On Windows (if MongoDB is installed)
-mongod
-```
+Update the MongoDB connection settings in ".env".
 
-5. **Run the Application**
+4. Start MongoDB
 
-Terminal 1 - Backend:
-```bash
-cd backend
+Ensure your MongoDB service is running.
+
+5. Run Backend
+
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
 
-Terminal 2 - Frontend:
-```bash
+6. Run Frontend
+
 cd frontend
 npm run dev
-```
 
-6. **Access BiasScope**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
+7. Access Application
 
-## 📖 Usage
+Service| URL
+Frontend| http://localhost:3000
+Backend| http://localhost:8000
+API Documentation| http://localhost:8000/docs
 
-1. **Start Analysis**: Enter your AI model's API URL in the frontend
-2. **Monitor Progress**: Watch real-time progress updates
-3. **View Results**: Explore bias scores, fairness metrics, and visualizations
-4. **Download Report**: Get comprehensive PDF report with all findings
+Use the actual Vite development port configured in your project if it differs from 3000.
 
-## 🛠️ Technology Stack
+---
 
-### Frontend
-- **React 18** - UI framework
-- **Tailwind CSS** - Styling
-- **Vite** - Build tool
-- **Recharts** - Data visualization
-- **React Router** - Routing
+🧪 Test with Sample Model API
 
-### Backend
-- **FastAPI** - Web framework
-- **MongoDB** - Database
-- **Faker** - Synthetic data generation
-- **Fairlearn** - Fairness assessment
-- **AIF360** - AI Fairness toolkit
-- **SHAP/LIME** - Explainability
-- **Matplotlib/Plotly** - Visualization
-- **ReportLab** - PDF generation
+BiasScope includes a sample model API to demonstrate the evaluation workflow without requiring an external machine learning deployment.
 
-## 👥 Team
-
-- **Rushikesh** - Frontend development lead
-- **Sandip** - UI styling and responsiveness
-- **Tejas** - Database schema design, data consistency, data-driven components
-- **Yash** - Documentation and training materials
-
-## 📚 Documentation
-
-Comprehensive documentation is available in the `docs/` folder:
-
-- [Getting Started](./docs/getting-started.md)
-- [User Interface Guide](./docs/user-interface.md)
-- [Interpreting Results](./docs/interpreting-results.md)
-- [System Architecture](./docs/architecture.md)
-- [Bias and Fairness Concepts](./docs/bias-fairness-concepts.md)
-- [How to Use BiasScope](./docs/how-to-use-biasscope.md)
-- [Best Practices](./docs/best-practices.md)
-
-## 🔧 Configuration
-
-### Backend Configuration
-
-Edit `backend/.env`:
-```env
-MONGODB_URL=mongodb://localhost:27017
-MONGODB_DATABASE=biasscope
-SYNTHETIC_DATA_SIZE=1000
-SYNTHETIC_DATA_GENERATOR=faker
-```
-
-### Frontend Configuration
-
-Frontend configuration is in `frontend/vite.config.js`. The API proxy is configured to forward `/api` requests to the backend.
-
-## 📊 How It Works
-
-1. **User Input**: User provides AI model API URL
-2. **Data Generation**: System generates synthetic test data using Faker or CTGAN
-3. **Model Testing**: Sends requests to user's model API and collects responses
-4. **Bias Analysis**: Analyzes responses using Fairlearn, AIF360, SHAP/LIME
-5. **Report Generation**: Creates visual charts and PDF reports
-6. **Results Display**: Presents findings through interactive frontend
-
-## 🧪 Test quickly with the included sample model API
-
-If you don't have a real model API yet, run the included sample API:
-
-```bash
 cd sample_model_api
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+Activate the virtual environment and install dependencies:
+
 pip install -r requirements.txt
+
+Start the sample API:
+
 uvicorn app:app --reload --host 0.0.0.0 --port 5000
-```
 
-Then paste this URL into BiasScope:
+Sample prediction endpoint:
 
-`http://localhost:5000/predict`
+http://localhost:5000/predict
 
-## 🧪 API Endpoints
+Use this endpoint in the BiasScope frontend to test the integration.
 
-- `POST /api/analysis/start` - Start new analysis
-- `GET /api/analysis/{analysis_id}` - Get analysis results
-- `GET /api/analysis/{analysis_id}/report` - Download PDF report
-- `GET /api/analyses` - List all analyses
+---
 
-See [API Documentation](./docs/api-documentation.md) for details.
+🔌 API Endpoints
 
-## 📝 License
+Method| Endpoint| Description
+POST| "/api/analysis/start"| Start a fairness analysis
+GET| "/api/analysis/{analysis_id}"| Retrieve analysis results
+GET| "/api/analysis/{analysis_id}/report"| Download PDF report
+GET| "/api/analyses"| Retrieve analysis history
 
-[Add your license here]
+Refer to "docs/api-documentation.md" for additional details.
 
-## 🤝 Contributing
+---
 
-[Add contribution guidelines here]
+⚖️ Fairness Evaluation Considerations
 
-## 📧 Contact
+Fairness is context-dependent. Different applications may require different fairness definitions and evaluation criteria.
 
-[Add contact information here]
+BiasScope is designed around the following considerations:
 
-## 🙏 Acknowledgments
+- Demographic Parity: Compare positive prediction rates across demographic groups.
+- Equalized Odds: Compare true-positive and false-positive rates across groups when ground-truth labels are available.
+- Disparate Impact: Examine relative differences in favorable outcomes.
+- Explainability: Investigate feature contributions associated with model predictions.
 
-- Fairlearn team for fairness assessment tools
-- AIF360 team for comprehensive fairness toolkit
-- SHAP and LIME teams for explainability tools
+A fairness metric should not be interpreted independently of the application's context, dataset assumptions, and applicable ethical or legal requirements.
+
+---
+
+👥 Team
+
+Member| Responsibility
+Rushikesh| Frontend Development Lead
+Sandip| UI Styling and Responsiveness
+Tejas| Database Schema Design and Data Consistency
+Yash| Documentation and Training Materials
+
+---
+
+📚 Documentation
+
+Additional documentation is available in the "docs/" directory:
+
+- Getting Started
+- User Interface Guide
+- Interpreting Results
+- System Architecture
+- Bias and Fairness Concepts
+- How to Use BiasScope
+- Best Practices
+
+---
+
+🔮 Future Scope
+
+- Automated model API schema discovery.
+- Advanced synthetic data generation using CTGAN.
+- Support for additional fairness metrics and assessment frameworks.
+- Improved explainability and fairness correlation analysis.
+- Fairness monitoring across model versions.
+- Reproducible benchmarking using public fairness datasets.
+- Expanded support for different model API formats.
+- Security enhancements for externally supplied API endpoints.
+
+---
+
+📄 License
+
+License information will be added once the project license is finalized.
+
+🤝 Contributing
+
+Contribution guidelines will be published as the project develops.
+
+🙏 Acknowledgments
+
+We acknowledge the developers and research communities behind:
+
+- Microsoft Fairlearn
+- IBM AI Fairness 360
+- SHAP
+- LIME
+- FastAPI
+- React
+
+---
+
+BiasScope – Making AI Fairness Measurable, Explainable, and Accessible.
