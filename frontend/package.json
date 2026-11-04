@@ -1,7 +1,7 @@
 {
-  "name": "biasscope-frontend",
+  "name": "fairnexa-frontend",
   "version": "1.0.0",
-  "description": "BiasScope Frontend - AI Bias and Fairness Analysis UI",
+  "description": "FairNexa Frontend - AI Bias and Fairness Analysis UI",
   "private": true,
   "type": "module",
   "scripts": {

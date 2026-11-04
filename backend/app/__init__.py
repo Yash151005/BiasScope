@@ -1,1 +1,1 @@
-# BiasScope Backend Application Package
+# FairNexa Backend Application Package

@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="col-span-1">
             <div className="flex items-center space-x-2 mb-4">
               <Scale className="h-8 w-8 text-primary-400" />
-              <span className="text-xl font-bold text-white">BiasScope</span>
+              <span className="text-xl font-bold text-white">FairNexa</span>
             </div>
             <p className="text-sm text-gray-400 mb-4">
               AI Bias & Fairness Analysis Tool. Detect and measure bias in machine learning models.
@@ -91,8 +91,8 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-primary-400" />
-                <a href="mailto:support@biasscope.gmail.com" className="text-gray-400 hover:text-primary-400 transition-colors">
-                  support@biasscope.gmail.com
+                <a href="mailto:support@fairnexa.ai" className="text-gray-400 hover:text-primary-400 transition-colors">
+                  support@fairnexa.ai
                 </a>
               </li>
               <li className="flex items-center space-x-2">
@@ -112,7 +112,7 @@ const Footer = () => {
           {/* Bottom Section */}
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-gray-400 mb-4 md:mb-0">
-              <p>&copy; {currentYear} BiasScope. All rights reserved.</p>
+              <p>&copy; {currentYear} FairNexa. All rights reserved.</p>
             </div>
             <div className="flex space-x-6 text-sm">
               <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">

@@ -1,4 +1,4 @@
-# BiasScope Reports
+# FairNexa Reports
 
 Directory for storing generated analysis reports.
 

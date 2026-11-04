@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Loader2, AlertCircle, FileText, User, Briefcase, Calendar, Edit2, Save, X, CheckCircle, Upload, Camera } from 'lucide-react'
@@ -59,11 +59,7 @@ const Profile = () => {
     'Other'
   ]
 
-  useEffect(() => {
-    fetchUserData()
-  }, [])
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       const userId = localStorage.getItem('userId')
       if (!userId) {
@@ -90,7 +86,11 @@ const Profile = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [navigate])
+
+  useEffect(() => {
+    fetchUserData()
+  }, [fetchUserData])
 
   const handleEditChange = (e) => {
     const { name, value } = e.target

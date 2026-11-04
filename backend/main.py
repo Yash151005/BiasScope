@@ -1,14 +1,11 @@
-"""
-BiasScope Backend - FastAPI Application
-Main entry point for the bias analysis API
-"""
+"""FairNexa FastAPI application."""
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic import field_validator
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import uuid
 from datetime import datetime
 from urllib.parse import urlparse
@@ -19,7 +16,7 @@ from app.database.mongodb import get_database
 from app.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
-app = FastAPI(title="BiasScope API", version="1.0.0")
+app = FastAPI(title="FairNexa API", version="1.0.0")
 
 # CORS middleware
 app.add_middleware(
@@ -33,6 +30,15 @@ app.add_middleware(
 
 class AnalysisRequest(BaseModel):
     model_url: str
+    method: str = "POST"
+    headers: Dict[str, str] = Field(default_factory=dict)
+    timeout: Optional[float] = None
+    max_retries: Optional[int] = None
+    protected_attributes: List[str] = Field(default_factory=lambda: ["gender", "race"])
+    sample_count: Optional[int] = None
+    random_seed: Optional[int] = None
+    favorable_threshold: float = 0.5
+    ground_truth: Optional[List[Any]] = None
 
     @field_validator("model_url")
     @classmethod
@@ -64,6 +70,50 @@ class AnalysisRequest(BaseModel):
             raise ValueError("model_url must include a host (e.g., localhost:5000)")
 
         return v
+
+    @field_validator("method")
+    @classmethod
+    def validate_method(cls, value: str) -> str:
+        value = value.upper()
+        if value not in {"POST", "PUT", "PATCH"}:
+            raise ValueError("method must be POST, PUT, or PATCH")
+        return value
+
+    @field_validator("timeout")
+    @classmethod
+    def validate_timeout(cls, value: Optional[float]) -> Optional[float]:
+        if value is not None and not 1 <= value <= 120:
+            raise ValueError("timeout must be between 1 and 120 seconds")
+        return value
+
+    @field_validator("max_retries")
+    @classmethod
+    def validate_retries(cls, value: Optional[int]) -> Optional[int]:
+        if value is not None and not 1 <= value <= 5:
+            raise ValueError("max_retries must be between 1 and 5")
+        return value
+
+    @field_validator("protected_attributes")
+    @classmethod
+    def validate_attributes(cls, value: List[str]) -> List[str]:
+        cleaned = [item.strip() for item in value if item.strip()]
+        if not cleaned:
+            raise ValueError("protected_attributes must contain at least one attribute")
+        return cleaned
+
+    @field_validator("sample_count")
+    @classmethod
+    def validate_sample_count(cls, value: Optional[int]) -> Optional[int]:
+        if value is not None and not 1 <= value <= 10000:
+            raise ValueError("sample_count must be between 1 and 10000")
+        return value
+
+    @field_validator("favorable_threshold")
+    @classmethod
+    def validate_threshold(cls, value: float) -> float:
+        if not 0 <= value <= 1:
+            raise ValueError("favorable_threshold must be between 0 and 1")
+        return value
 
 
 class AnalysisResponse(BaseModel):
@@ -104,19 +154,19 @@ class ContactRequest(BaseModel):
 async def startup_event():
     """Initialize database connection on startup"""
     await get_database()
-    logger.info("BiasScope API started successfully")
+    logger.info("FairNexa API started successfully")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
-    logger.info("BiasScope API shutting down")
+    logger.info("FairNexa API shutting down")
 
 
 @app.get("/")
 async def root():
     """Health check endpoint"""
-    return {"message": "BiasScope API is running", "version": "1.0.0"}
+    return {"message": "FairNexa API is running", "version": "1.0.0"}
 
 
 @app.get("/health")
@@ -143,6 +193,19 @@ async def start_analysis(
         await analysis_service.create_analysis(
             analysis_id=analysis_id,
             model_url=str(request.model_url),
+            model_config={
+                "method": request.method,
+                "headers": request.headers,
+                "timeout": request.timeout,
+                "max_retries": request.max_retries,
+            },
+            analysis_config={
+                "protected_attributes": request.protected_attributes,
+                "sample_count": request.sample_count,
+                "random_seed": request.random_seed,
+                "favorable_threshold": request.favorable_threshold,
+                "ground_truth": request.ground_truth,
+            },
         )
 
         # Start analysis in background
@@ -150,6 +213,19 @@ async def start_analysis(
             analysis_service.run_analysis,
             analysis_id=analysis_id,
             model_url=str(request.model_url),
+            model_config={
+                "method": request.method,
+                "headers": request.headers,
+                "timeout": request.timeout,
+                "max_retries": request.max_retries,
+            },
+            analysis_config={
+                "protected_attributes": request.protected_attributes,
+                "sample_count": request.sample_count,
+                "random_seed": request.random_seed,
+                "favorable_threshold": request.favorable_threshold,
+                "ground_truth": request.ground_truth,
+            },
         )
 
         logger.info(f"Started analysis {analysis_id} for model {request.model_url}")
@@ -212,7 +288,7 @@ async def download_report(analysis_id: str):
         return FileResponse(
             report_path,
             media_type="application/pdf",
-            filename=f"biasscope-report-{analysis_id}.pdf",
+            filename=f"fairnexa-report-{analysis_id}.pdf",
         )
     except HTTPException:
         raise

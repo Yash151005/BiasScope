@@ -1,10 +1,10 @@
-# Getting Started with BiasScope
+# Getting Started with FairNexa
 
-Welcome to BiasScope! This guide will help you get started with analyzing AI models for bias and fairness.
+Welcome to FairNexa! This guide will help you get started with analyzing AI models for bias and fairness.
 
-## What is BiasScope?
+## What is FairNexa?
 
-BiasScope is an automated tool that evaluates AI models for bias and fairness. Simply provide your model's API endpoint, and BiasScope will:
+FairNexa is an automated tool that evaluates AI models for bias and fairness. Simply provide your model's API endpoint, and FairNexa will:
 
 - Generate synthetic test data automatically
 - Send requests to your model
@@ -19,9 +19,9 @@ BiasScope is an automated tool that evaluates AI models for bias and fairness. S
 
 ## Quick Start
 
-### Step 1: Access BiasScope
+### Step 1: Access FairNexa
 
-1. Open the BiasScope frontend in your browser (typically `http://localhost:3000`)
+1. Open the FairNexa frontend in your browser (typically `http://localhost:3000`)
 2. You'll see the home page with an overview of features
 
 ### Step 2: Start an Analysis

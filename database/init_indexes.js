@@ -1,4 +1,4 @@
-// MongoDB initialization script for BiasScope
+// MongoDB initialization script for FairNexa
 // Run with: mongo biasscope init_indexes.js
 
 db = db.getSiblingDB('biasscope');
@@ -9,4 +9,4 @@ db.analyses.createIndex({ "status": 1 });
 db.analyses.createIndex({ "created_at": -1 });
 db.analyses.createIndex({ "model_url": 1 });
 
-print("Indexes created successfully for BiasScope database");
+print("Indexes created successfully for FairNexa database");

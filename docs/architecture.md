@@ -1,10 +1,10 @@
-# BiasScope System Architecture
+# FairNexa System Architecture
 
-Complete technical architecture documentation for BiasScope.
+Complete technical architecture documentation for FairNexa.
 
 ## Overview
 
-BiasScope follows a clean, modular architecture with clear separation of concerns:
+FairNexa follows a clean, modular architecture with clear separation of concerns:
 
 ```
 ┌─────────────┐

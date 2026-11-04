@@ -1,6 +1,6 @@
-# BiasScope Setup Guide
+# FairNexa Setup Guide
 
-Quick setup guide for getting BiasScope running locally.
+Quick setup guide for getting FairNexa running locally.
 
 ## Prerequisites Checklist
 
@@ -16,7 +16,7 @@ Quick setup guide for getting BiasScope running locally.
 
 ```bash
 git clone <repository-url>
-cd BiasScope
+cd FairNexa
 ```
 
 ### 2. Frontend Setup
@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
 Run it: `python test_model_api.py`
 
-Test with BiasScope: `http://localhost:5000/predict`
+Test with FairNexa: `http://localhost:5000/predict`
 
 ## Next Steps
 

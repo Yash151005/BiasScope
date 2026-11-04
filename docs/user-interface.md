@@ -1,10 +1,10 @@
-# BiasScope User Interface Guide
+# FairNexa User Interface Guide
 
-Complete guide to using the BiasScope web interface.
+Complete guide to using the FairNexa web interface.
 
 ## Overview
 
-The BiasScope frontend is built with React and Tailwind CSS, providing a clean, modern interface for bias analysis.
+The FairNexa frontend is built with React and Tailwind CSS, providing a clean, modern interface for bias analysis.
 
 ## Pages
 
@@ -12,7 +12,7 @@ The BiasScope frontend is built with React and Tailwind CSS, providing a clean, 
 
 The landing page provides:
 
-- **Hero Section**: Overview of BiasScope capabilities
+- **Hero Section**: Overview of FairNexa capabilities
 - **Features**: Key features highlighted with icons
 - **How It Works**: Step-by-step process explanation
 - **Start Analysis Button**: Quick access to new analysis

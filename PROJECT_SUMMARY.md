@@ -1,13 +1,13 @@
-# BiasScope Project Summary
+# FairNexa Project Summary
 
 ## Overview
 
-BiasScope is a comprehensive AI bias and fairness analysis tool that automatically evaluates AI models for bias without requiring manual data input or model training. The system takes only an AI model API URL and handles everything else automatically.
+FairNexa is a comprehensive AI bias and fairness analysis tool that automatically evaluates AI models for bias without requiring manual data input or model training. The system takes only an AI model API URL and handles everything else automatically.
 
 ## Project Structure
 
 ```
-BiasScope/
+FairNexa/
 ├── frontend/              # React + Tailwind CSS UI
 │   ├── src/
 │   │   ├── components/   # Reusable UI components
@@ -46,7 +46,7 @@ BiasScope/
 │   ├── api-documentation.md
 │   ├── database-schema.md
 │   ├── bias-fairness-concepts.md
-│   ├── how-to-use-biasscope.md
+│   ├── how-to-use-fairnexa.md
 │   └── best-practices.md
 │
 ├── README.md          # Main project README

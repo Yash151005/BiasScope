@@ -1,4 +1,4 @@
-# Interpreting BiasScope Results
+# Interpreting FairNexa Results
 
 Guide to understanding bias analysis results and metrics.
 

@@ -82,7 +82,7 @@ const ContactUs = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Have questions or feedback? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            Have questions or feedback? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
           </p>
         </div>
 
@@ -93,7 +93,7 @@ const ContactUs = () => {
               <Mail className="h-6 w-6 text-primary-600" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
-            <p className="text-gray-600">support@biasscope.ai</p>
+            <p className="text-gray-600">support@fairnexa.ai</p>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-lg transition">
@@ -123,7 +123,7 @@ const ContactUs = () => {
               <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
               <div>
                 <p className="font-semibold text-green-800">Message sent successfully!</p>
-                <p className="text-sm text-green-700">We'll get back to you soon.</p>
+                <p className="text-sm text-green-700">We&apos;ll get back to you soon.</p>
               </div>
             </div>
           )}
@@ -229,9 +229,9 @@ const ContactUs = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Frequently Asked Questions</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-gray-900">What is BiasScope?</h4>
+                <h4 className="font-medium text-gray-900">What is FairNexa?</h4>
                 <p className="text-gray-600 text-sm mt-1">
-                  BiasScope is an AI bias and fairness analysis tool that helps detect and measure bias in machine learning models.
+                  FairNexa is an AI bias and fairness analysis tool that helps detect and measure bias in machine learning models.
                 </p>
               </div>
               <div>
@@ -243,7 +243,7 @@ const ContactUs = () => {
               <div>
                 <h4 className="font-medium text-gray-900">Do you offer technical support?</h4>
                 <p className="text-gray-600 text-sm mt-1">
-                  Yes, we provide technical support for all BiasScope users. Contact us for assistance.
+                  Yes, we provide technical support for all FairNexa users. Contact us for assistance.
                 </p>
               </div>
             </div>

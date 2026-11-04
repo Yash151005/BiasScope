@@ -30,7 +30,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
             <Scale className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">BiasScope</span>
+            <span className="text-xl font-bold text-gray-900">FairNexa</span>
           </Link>
           <nav className="flex space-x-2 items-center">
             <Link

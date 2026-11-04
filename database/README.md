@@ -1,6 +1,6 @@
-# BiasScope Database
+# FairNexa Database
 
-MongoDB database management for BiasScope AI Bias & Fairness Analysis tool.
+MongoDB database management for FairNexa AI Bias & Fairness Analysis tool.
 
 ## Database Design
 

@@ -141,7 +141,7 @@ class ReportGenerator:
 
             fig.update_layout(
                 height=800,
-                title_text=f"BiasScope Analysis Report - {analysis_id}",
+                title_text=f"FairNexa Analysis Report - {analysis_id}",
                 showlegend=False,
             )
 
@@ -178,7 +178,7 @@ class ReportGenerator:
             alignment=TA_CENTER,
             fontName="Helvetica-Bold"
         )
-        story.append(Paragraph("BiasScope", header_style))
+        story.append(Paragraph("FairNexa", header_style))
         story.append(Spacer(1, 0.1 * inch))
         
         subtitle_style = ParagraphStyle(
@@ -231,7 +231,7 @@ class ReportGenerator:
         cert_data = [
             ["Analysis ID:", cert_number],
             ["Issue Date:", cert_date],
-            ["Platform:", "BiasScope v1.0"],
+            ["Platform:", "FairNexa v1.0"],
             ["Certification Status:", "✓ VERIFIED & AUTHENTIC"],
         ]
         
@@ -602,7 +602,7 @@ class ReportGenerator:
     def _get_recommendation(self, bias_score: float) -> str:
         """Return recommendation string based on bias score"""
         if bias_score < 0.3:
-            return "Your model is fair and unbiased. Continue monitoring for changes as data evolves."
+            return "No material disparity was detected by the configured metrics. Continue monitoring as data evolves."
         elif bias_score < 0.7:
             return "Moderate bias detected. Review feature influence and consider rebalancing your training data or applying bias mitigation techniques."
         else:
@@ -610,7 +610,7 @@ class ReportGenerator:
 
     def _generate_digital_signature(self, analysis_id: str) -> str:
         """Generate HMAC-SHA256 digital signature"""
-        secret_key = b"BiasScope-Authenticity-Key-2026"
+        secret_key = settings.report_signing_key.encode("utf-8")
         message = f"{analysis_id}-{datetime.now().strftime('%Y-%m-%d')}".encode()
         signature = hmac.new(secret_key, message, hashlib.sha256).hexdigest()
         return signature

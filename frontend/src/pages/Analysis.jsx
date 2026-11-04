@@ -5,6 +5,10 @@ import { Loader2, AlertCircle, CheckCircle } from 'lucide-react'
 
 const Analysis = () => {
   const [apiUrl, setApiUrl] = useState('')
+  const [method, setMethod] = useState('POST')
+  const [timeout, setTimeoutSeconds] = useState(30)
+  const [sampleCount, setSampleCount] = useState(100)
+  const [protectedAttributes, setProtectedAttributes] = useState('gender, race')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -27,6 +31,13 @@ const Analysis = () => {
     try {
       const response = await axios.post('/api/analysis/start', {
         model_url: apiUrl,
+        method,
+        timeout: Number(timeout),
+        sample_count: Number(sampleCount),
+        protected_attributes: protectedAttributes
+          .split(',')
+          .map((attribute) => attribute.trim())
+          .filter(Boolean),
       })
 
       if (response.data.analysis_id) {
@@ -72,6 +83,72 @@ const Analysis = () => {
             <p className="mt-2 text-sm text-gray-500">
               Enter the endpoint URL where your AI model accepts prediction requests
             </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="method" className="block text-sm font-medium text-gray-700 mb-2">
+                HTTP method
+              </label>
+              <select
+                id="method"
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                disabled={loading}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"
+              >
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="sampleCount" className="block text-sm font-medium text-gray-700 mb-2">
+                  Test samples
+                </label>
+                <input
+                  type="number"
+                  id="sampleCount"
+                  min="1"
+                  max="10000"
+                  value={sampleCount}
+                  onChange={(e) => setSampleCount(e.target.value)}
+                  disabled={loading}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="protectedAttributes" className="block text-sm font-medium text-gray-700 mb-2">
+                  Protected attributes
+                </label>
+                <input
+                  type="text"
+                  id="protectedAttributes"
+                  value={protectedAttributes}
+                  onChange={(e) => setProtectedAttributes(e.target.value)}
+                  disabled={loading}
+                  placeholder="gender, race"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="timeout" className="block text-sm font-medium text-gray-700 mb-2">
+                Request timeout (seconds)
+              </label>
+              <input
+                type="number"
+                id="timeout"
+                min="1"
+                max="120"
+                value={timeout}
+                onChange={(e) => setTimeoutSeconds(e.target.value)}
+                disabled={loading}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm"
+              />
+            </div>
           </div>
 
           {error && (

@@ -11,7 +11,7 @@ const Home = () => {
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
           Automatically evaluate your AI models for bias and fairness. Just provide
-          your model API endpoint, and we'll handle the rest.
+          your model API endpoint, and we&apos;ll handle the rest.
         </p>
         <Link
           to="/analysis"
@@ -69,7 +69,7 @@ const Home = () => {
             <div className="ml-4">
               <h4 className="font-semibold text-gray-900">Provide Model API</h4>
               <p className="text-gray-600">
-                Enter your AI model's API endpoint URL
+                Enter your AI model&apos;s API endpoint URL
               </p>
             </div>
           </div>

@@ -1,5 +1,5 @@
 """
-MongoDB schemas and data models for BiasScope
+MongoDB schemas and data models for FairNexa
 Designed by Tejas - Schema design and data consistency lead
 """
 

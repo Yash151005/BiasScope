@@ -1,6 +1,6 @@
-# BiasScope Best Practices
+# FairNexa Best Practices
 
-Guidelines and recommendations for effective use of BiasScope.
+Guidelines and recommendations for effective use of FairNexa.
 
 ## Analysis Best Practices
 
@@ -184,7 +184,7 @@ Track these metrics:
 ## Continuous Learning
 
 1. **Stay Updated**: Keep up with fairness research
-2. **Tool Updates**: Update BiasScope regularly
+2. **Tool Updates**: Update FairNexa regularly
 3. **Best Practices**: Refine practices over time
 4. **Community**: Engage with fairness community
 5. **Training**: Provide team training

@@ -1,5 +1,5 @@
 """
-Logging utility for BiasScope Backend
+Logging utility for FairNexa Backend
 """
 
 import logging

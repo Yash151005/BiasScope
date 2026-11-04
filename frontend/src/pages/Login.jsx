@@ -54,7 +54,7 @@ const Login = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your BiasScope account</p>
+            <p className="text-gray-600">Sign in to your FairNexa account</p>
           </div>
 
           {/* Error Message */}
@@ -130,14 +130,14 @@ const Login = () => {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">New to BiasScope?</span>
+              <span className="px-2 bg-white text-gray-500">New to FairNexa?</span>
             </div>
           </div>
 
           {/* Signup Link */}
           <div className="text-center">
             <p className="text-gray-600 text-sm">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <a
                 href="/signup"
                 className="text-primary-600 hover:text-primary-700 font-semibold transition"

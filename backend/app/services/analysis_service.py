@@ -25,13 +25,22 @@ class AnalysisService:
         self.report_generator = ReportGenerator()
 
     async def create_analysis(
-        self, analysis_id: str, model_url: str
+        self, analysis_id: str, model_url: str, model_config: Optional[Dict[str, Any]] = None,
+        analysis_config: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Create a new analysis record in the database"""
         db = await get_database()
         analysis_doc = {
             "analysis_id": analysis_id,
             "model_url": model_url,
+            "model_config": {
+                key: value for key, value in (model_config or {}).items()
+                if key not in {"headers", "auth"}
+            },
+            "analysis_config": {
+                key: value for key, value in (analysis_config or {}).items()
+                if key != "ground_truth"
+            },
             "status": "started",
             "progress": 0.0,
             "created_at": datetime.utcnow(),
@@ -73,7 +82,13 @@ class AnalysisService:
             analysis["_id"] = str(analysis["_id"])
         return analyses
 
-    async def run_analysis(self, analysis_id: str, model_url: str) -> None:
+    async def run_analysis(
+        self,
+        analysis_id: str,
+        model_url: str,
+        model_config: Optional[Dict[str, Any]] = None,
+        analysis_config: Optional[Dict[str, Any]] = None,
+    ) -> None:
         """
         Run the complete bias analysis workflow
         """
@@ -83,7 +98,10 @@ class AnalysisService:
             # Step 1: Generate synthetic data (20% progress)
             await self.update_analysis(analysis_id, {"status": "in_progress", "progress": 10})
             logger.info(f"[{analysis_id}] Generating synthetic data...")
-            synthetic_data = await self.data_generator.generate_data()
+            synthetic_data = await self.data_generator.generate_data(
+                size=(analysis_config or {}).get("sample_count"),
+                seed=(analysis_config or {}).get("random_seed"),
+            )
             await self.update_analysis(
                 analysis_id,
                 {
@@ -108,7 +126,11 @@ class AnalysisService:
             for i, input_data in enumerate(synthetic_data):
                 attempts += 1
                 try:
-                    output = await self.model_client.predict(model_url, input_data)
+                    output = await self.model_client.predict(
+                        model_url,
+                        input_data,
+                        **(model_config or {}),
+                    )
                     model_outputs.append(
                         {
                             "input_id": f"input_{i}",
@@ -141,7 +163,11 @@ class AnalysisService:
             logger.info(f"[{analysis_id}] Running bias analysis...")
             await self.update_analysis(analysis_id, {"progress": 65})
             bias_results = await self.bias_analyzer.analyze(
-                synthetic_data, model_outputs
+                synthetic_data,
+                model_outputs,
+                protected_attributes=(analysis_config or {}).get("protected_attributes"),
+                ground_truth=(analysis_config or {}).get("ground_truth"),
+                favorable_threshold=(analysis_config or {}).get("favorable_threshold", 0.5),
             )
             await self.update_analysis(
                 analysis_id,

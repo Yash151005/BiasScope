@@ -1,4 +1,4 @@
-# BiasScope Database Schema
+# FairNexa Database Schema
 
 Complete MongoDB database schema documentation.
 

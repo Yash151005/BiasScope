@@ -1,11 +1,11 @@
-# How to Use BiasScope
+# How to Use FairNexa
 
-Step-by-step guide to using BiasScope for AI bias analysis.
+Step-by-step guide to using FairNexa for AI bias analysis.
 
 ## Prerequisites
 
 1. **AI Model with API**: Your model must have a REST API endpoint
-2. **API Accessibility**: The endpoint must be publicly accessible or accessible from BiasScope server
+2. **API Accessibility**: The endpoint must be publicly accessible or accessible from FairNexa server
 3. **JSON Format**: API should accept JSON input and return JSON output
 
 ## Step-by-Step Guide
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 ### Step 2: Start Analysis
 
-1. Open BiasScope frontend (typically `http://localhost:3000`)
+1. Open FairNexa frontend (typically `http://localhost:3000`)
 2. Click "Start Analysis" or navigate to "New Analysis"
 3. Enter your model API URL
 4. Click "Start Analysis" button
@@ -188,7 +188,7 @@ Once analysis completes, you'll see:
 ## Integration
 
 ### CI/CD Pipeline
-- Add BiasScope to testing pipeline
+- Add FairNexa to testing pipeline
 - Automated bias checks
 - Fail builds on high bias
 
@@ -219,7 +219,7 @@ If you need assistance:
 
 ## Next Steps
 
-After using BiasScope:
+After using FairNexa:
 
 1. Review results carefully
 2. Identify areas for improvement

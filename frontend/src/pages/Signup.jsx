@@ -119,7 +119,7 @@ const Signup = () => {
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h2>
             <p className="text-gray-600 mb-4">
-              Welcome to BiasScope. Your account has been successfully created.
+              Welcome to FairNexa. Your account has been successfully created.
             </p>
             <p className="text-sm text-gray-500">
               Redirecting to login page...
@@ -136,7 +136,7 @@ const Signup = () => {
         <div className="bg-white rounded-lg shadow-xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Join BiasScope</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Join FairNexa</h1>
             <p className="text-gray-600">Create your account to get started</p>
           </div>
 

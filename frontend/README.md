@@ -1,6 +1,6 @@
-# BiasScope Frontend
+# FairNexa Frontend
 
-React-based user interface for BiasScope AI Bias & Fairness Analysis tool.
+React-based user interface for FairNexa AI Bias & Fairness Analysis tool.
 
 ## Technology Stack
 

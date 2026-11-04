@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from fastapi import FastAPI
 
-app = FastAPI(title="BiasScope Sample Model API", version="1.0.0")
+app = FastAPI(title="FairNexa Sample Model API", version="1.0.0")
 
 
 @app.get("/health")
@@ -13,7 +13,7 @@ async def health():
 @app.post("/predict")
 async def predict(payload: Dict[str, Any]):
     """
-    Very simple deterministic-ish scoring function so BiasScope has something to analyze.
+    Very simple deterministic-ish scoring function so FairNexa has something to analyze.
     This is NOT a real model.
     """
     age = float(payload.get("age", 0) or 0)

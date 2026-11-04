@@ -1,6 +1,6 @@
-# BiasScope API Documentation
+# FairNexa API Documentation
 
-Complete API reference for BiasScope backend.
+Complete API reference for FairNexa backend.
 
 ## Base URL
 
@@ -23,7 +23,7 @@ Check if API is running.
 **Response**:
 ```json
 {
-  "message": "BiasScope API is running",
+  "message": "FairNexa API is running",
   "version": "1.0.0"
 }
 ```
@@ -49,9 +49,22 @@ Start a new bias analysis.
 **Request Body**:
 ```json
 {
-  "model_url": "https://your-model-api.com/predict"
+  "model_url": "https://your-model-api.com/predict",
+  "method": "POST",
+  "headers": {},
+  "timeout": 30,
+  "max_retries": 3,
+  "sample_count": 100,
+  "random_seed": 42,
+  "protected_attributes": ["gender", "race"],
+  "favorable_threshold": 0.5
 }
 ```
+
+`ground_truth` is optional and must be an array aligned with the generated
+sample count. Equal-opportunity and equalized-odds metrics are only calculated
+when ground-truth labels are supplied. API headers are used for the request but
+are excluded from persisted analysis metadata.
 
 **Response** (200 OK):
 ```json
@@ -151,7 +164,7 @@ Download analysis report as PDF.
 
 **Response** (200 OK):
 - Content-Type: `application/pdf`
-- File download with filename: `biasscope-report-{analysis_id}.pdf`
+- File download with filename: `fairnexa-report-{analysis_id}.pdf`
 
 **Error Responses**:
 - `404 Not Found`: Report not found or not ready
@@ -264,7 +277,7 @@ Your model API should:
 }
 ```
 
-Or any JSON format - BiasScope will extract the prediction value.
+Or any JSON format - FairNexa will extract the prediction value.
 
 ## Error Handling
 

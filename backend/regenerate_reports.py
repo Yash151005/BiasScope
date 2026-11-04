@@ -80,7 +80,7 @@ async def regenerate_reports():
 
 
 if __name__ == "__main__":
-    print("BiasScope Report Regeneration Utility")
+    print("FairNexa Report Regeneration Utility")
     print("="*60)
     print()
     

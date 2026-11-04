@@ -1,6 +1,6 @@
-# BiasScope Backend
+# FairNexa Backend
 
-Python-based FastAPI backend for BiasScope AI Bias & Fairness Analysis tool.
+Python-based FastAPI backend for FairNexa AI Bias & Fairness Analysis tool.
 
 ## Technology Stack
 

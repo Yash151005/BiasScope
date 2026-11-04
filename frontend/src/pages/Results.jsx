@@ -14,13 +14,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ComposedChart,
-  Line,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
 } from 'recharts'
 
 const Results = () => {
@@ -71,7 +64,7 @@ const Results = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', `biasscope-report-${analysisId}.pdf`)
+      link.setAttribute('download', `fairnexa-report-${analysisId}.pdf`)
       document.body.appendChild(link)
       link.click()
       link.remove()
